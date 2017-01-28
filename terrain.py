@@ -14,13 +14,13 @@ class Terrain:
         # lights
         #   ambient
         alight=AmbientLight("alight")
-        alight.setColor(Vec4(0.4, 0.4, 0.4, 1))
+        alight.setColor(Vec4(0.3, 0.3, 0.3, 1))
         alightP=self.base.render.attachNewNode(alight)
         self.base.render.setLight(alightP)
         #   directional
         sun=DirectionalLight("sun")
-        sun.setColor(Vec4(1, 0.973, 0.491, 1))
-        sun.setShadowCaster(True, 4096, 4096)
+        sun.setColor(Vec4(1, 0.973, 0.691, 1))
+        #sun.setShadowCaster(True, 4096, 4096)
         sun.getLens().setFilmSize(Vec2(30, 30))
         sun.getLens().setNearFar(10, 100)
         sun.getLens().setFov(100)

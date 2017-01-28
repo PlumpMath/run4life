@@ -1,6 +1,5 @@
-from panda3d.core import CollideMask, CollisionNode, CollisionRay, CollisionHandlerQueue
+from panda3d.core import CollideMask, CollisionNode, CollisionRay, CollisionSphere, CollisionHandlerQueue
 from direct.actor.Actor import Actor
-import math
 
 import logging
 log=logging.getLogger(__name__)
@@ -13,8 +12,8 @@ class Player:
         STATE_JUMP="Jump"
         STATE_FALL="Fall"
         
-        JUMP_HEIGHT=2
-        JUMP_A=-45
+        JUMP_ACCEL=63
+        FALL_ACCEL=-9.81
     
         TERRAIN_NONE=0
         TERRAIN_GROUND=1
@@ -34,10 +33,11 @@ class Player:
             self.state=Player.STATE_IDLE
             self.walkDir=0
             self.rotationDir=0
-            self.jumpV=0
+            self.zVelocity=0
             self.zOffset=None
-            self.terrainZone=None
+            self.terrainZone=Player.TERRAIN_NONE
             self.terrainSurfZ=None
+            self.collidedObjects=list()
             # actor
             self.actor=Actor("models/player")
             self.actor.reparentTo(self.base.render)
@@ -53,6 +53,16 @@ class Player:
             collRayNP.show()
             self.collQRay=CollisionHandlerQueue()
             self.base.cTrav.addCollider(collRayNP, self.collQRay)
+            #   sphere
+            collSphere=CollisionSphere(0, 0, 0.5, 0.25)
+            collSphereN=CollisionNode("playerCollSphere")
+            collSphereN.addSolid(collSphere)
+            collSphereN.setFromCollideMask(2)
+            collSphereN.setIntoCollideMask(CollideMask.allOff())
+            collSphereNP=self.actor.attachNewNode(collSphereN)
+            collSphereNP.show()
+            self.collQSphere=CollisionHandlerQueue()
+            self.base.cTrav.addCollider(collSphereNP, self.collQSphere)
             # keys
             self.actor.accept("shift", self.setKeyState, ["Run", True])
             self.actor.accept("arrow_up", self.setKeyState, ["WalkFw", True])
@@ -69,8 +79,9 @@ class Player:
             self.base.taskMgr.add(self.update, "playerUpdateTask")
         
         def setKeyState(self, key, state):
-            log.debug("%s->%s"%(key, str(state)))
-            self.keyState[key]=state
+            if not self.keyState[key]==state:
+                log.debug("setKeyState %s->%s"%(key, str(state)))
+                self.keyState[key]=state
         
         def defineState(self):
             # keys states
@@ -106,37 +117,57 @@ class Player:
                     log.debug("new state: %s"%str(self.state))
             # from Jump -> Fall
             elif self.state==Player.STATE_JUMP:
-                self.state=Player.STATE_FALL
-                log.debug("new state: %s"%str(self.state))
-                # calculate initial jump "velocity"; for mass=1, jump height=JUMP_HEIGHT, a=JUMP_A; Ec=>Ep=mgh
-                Ec=abs(1*Player.JUMP_A*Player.JUMP_HEIGHT)
-                self.jumpV=math.sqrt(2*Ec/1)
-                log.debug("jump Ec=%f V=%f"%(Ec, self.jumpV))
+                if self.zVelocity>0:
+                    self.state=Player.STATE_FALL
+                    log.debug("new state: %s"%str(self.state))
             # from Fall -> Idle
             elif self.state==Player.STATE_FALL:
                 if self.zOffset<=0:
                     self.state=Player.STATE_IDLE
                     log.debug("new state: %s"%str(self.state))
-                    self.jumpV=0
-                    self.actor.setZ(self.terrainSurfZ)
+                    self.zVelocity=0
+                    #self.actor.setZ(self.terrainSurfZ)
+        
+        def processState(self, dt):
+            # walk
+            if self.walkDir!=0:
+                speed=0.6 if self.state==Player.STATE_RUN else 0.3
+                self.actor.setY(self.actor, speed*self.walkDir*dt)
+            if self.rotationDir!=0:
+                self.actor.setH(self.actor.getH()+15*self.rotationDir)
+            # jump
+            if self.state==Player.STATE_JUMP:
+                self.zVelocity=Player.JUMP_ACCEL*dt
+                log.debug("jump start at v=%f"%self.zVelocity)
+            # fall
+            if self.state==Player.STATE_FALL:
+                dZ=self.zVelocity*dt
+                dV=Player.FALL_ACCEL*dt
+                newZ=self.actor.getZ()+dZ
+                log.debug("falling... dt=%(dt)f getZ=%(getZ)f v=%(v)f dZ=%(dZ)f newZ=%(newZ)f dV=%(dV)f zOffset=%(zOff)f"%{"dt":dt, "getZ":self.actor.getZ(), "v":self.zVelocity, "dZ":dZ, "newZ":newZ, "dV":dV, "zOff":self.zOffset})
+                if newZ<self.terrainSurfZ: newZ=self.terrainSurfZ
+                self.actor.setZ(newZ)
+                self.zVelocity+=dV
         
         def processTerrainRelation(self): # -> [terrainZone, terrainSurfZ, zOffset]
             collEntries=self.collQRay.getEntries()
-            if len(collEntries)==0:
-                log.error("out of terrain, pos=%s"%str(self.actor.getPos()))
-                if self.terrainZone!=Player.TERRAIN_NONE:
-                    self.terrainZone=Player.TERRAIN_NONE
-                    self.onTerrainZoneChanged(Player.TERRAIN_NONE)
-                    return Player.TERRAIN_NONE, 0, 0
-            maxZ=0
-            for entry in collEntries:
-                entryZ=entry.getSurfacePoint(self.base.render).getZ()
-                if entryZ>maxZ: maxZ=entryZ
-            terrainSurfZ=maxZ
-            zOffset=self.actor.getZ()-self.terrainSurfZ
-            entryName=entry.getIntoNodePath().getName()
-            #log.debug("ray collision entry name: %s"%entryName)
             newZone=None
+            #
+            if len(collEntries)==0:
+                #log.error("out of terrain, pos=%s"%str(self.actor.getPos()))
+                newZone=Player.TERRAIN_NONE
+                if newZone!=self.terrainZone:
+                    self.onTerrainZoneChanged(Player.TERRAIN_NONE)
+                self.terrainZone=newZone
+                return Player.TERRAIN_NONE, 0, 0
+            #
+            entries=list(collEntries)
+            entries.sort(key=lambda x:x.getSurfacePoint(self.base.render).getZ())
+            terrainSurfZ=entries[-1].getSurfacePoint(self.base.render).getZ()
+            entryName=entries[-1].getIntoNodePath().getName()
+            #
+            zOffset=self.actor.getZ()-self.terrainSurfZ
+            #log.debug("ray collision entry name: %s"%entryName)
             if entryName=="Ground":
                 newZone=Player.TERRAIN_GROUND
             elif entryName.startswith("Water"):
@@ -144,7 +175,18 @@ class Player:
             return newZone, terrainSurfZ, zOffset
         
         def onTerrainZoneChanged(self, zone):
-            log.debug("terrain zone chaged to: %i"%self.terrainZone)
+            log.debug("terrain zone chaged to: %i"%zone)
+        
+        def processObstaclesRelation(self):
+            self.collidedObjects=list()
+            collEntries=list(self.collQSphere.getEntries())
+            if len(collEntries)==0:
+                return
+            for entry in collEntries:
+                entryName=entry.getIntoNodePath().getName()
+                relPos=self.actor.getPos()-entry.getIntoNodePath().getPos()
+                relHpr=self.actor.getHpr()-entry.getIntoNodePath().getHpr()
+                self.collidedObjects.append("%s [%s,%s]"%(entryName, str(relPos), str(relHpr)))
         
         def update(self, task):
             # clock
@@ -157,22 +199,12 @@ class Player:
             if self.zOffset>0.5 and self.state!=Player.STATE_FALL:
                 self.state=Player.STATE_FALL
                 log.debug("new state: %s"%str(self.state))
-            else:
+            elif self.zOffset<=0:
                 self.actor.setZ(self.terrainSurfZ)
+            # obstacles relation
+            self.processObstaclesRelation()
             # state
             self.defineState()
-            # walk
-            if self.walkDir!=0:
-                speed=0.6 if self.state==Player.STATE_RUN else 0.3
-                self.actor.setY(self.actor, speed*self.walkDir*dt)
-            if self.rotationDir!=0:
-                self.actor.setH(self.actor.getH()+15*self.rotationDir)
-            # jump
-            if self.state==Player.STATE_FALL:
-                dZ=self.jumpV*dt
-                newZ=self.actor.getZ()+dZ
-                if newZ<self.terrainSurfZ: newZ=self.terrainSurfZ
-                self.actor.setZ(newZ)
-                self.jumpV+=Player.JUMP_A*dt
-                log.debug("jumping... h=%f, dZ=%f, v=%f, dt=%f"%(self.zOffset, dZ, self.jumpV, dt))
+            self.processState(dt)
+            # move
             return task.cont

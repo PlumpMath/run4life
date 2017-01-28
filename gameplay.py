@@ -8,9 +8,9 @@ import logging
 log=logging.getLogger(__name__)
 
 def addLabel(base, text):
-    return OnscreenText(text=text, style=1, fg=(1, 1, 1, 1), scale=.06,
+    return OnscreenText(text=text, style=1, fg=(1, 1, 1, 1), scale=.05,
                         parent=base.a2dBottomRight, align=TextNode.ARight,
-                        pos=(-0.1, 0.09), shadow=(0, 0, 0, 1))
+                        pos=(-0.1, 0.29), shadow=(0, 0, 0, 1))
 
 class Gameplay:
 
@@ -23,7 +23,7 @@ class Gameplay:
         log.info("start...")
         # collisions
         self.base.cTrav=CollisionTraverser()
-        self.base.cTrav.showCollisions(self.base.render)
+        #self.base.cTrav.showCollisions(self.base.render)
         # meshes
         self.terrain=Terrain(self.base)
         self.player=Player(self.base)
@@ -40,5 +40,5 @@ class Gameplay:
         log.info("stoped.")
 
     def update(self, task):
-        self.label.setText("Player state:{state:'%s',zoff:%s}. Terrain:{zone:'%s',surfz:%s}\njumpV=%s"%(self.player.state, str(self.player.zOffset), str(self.player.terrainZone), str(self.player.terrainSurfZ), str(self.player.jumpV)))
+        self.label.setText("Player state:{state:'%s',pos:%s,hpr=%s,zoff:%s}.\nTerrain:{zone:'%s',surfz:%s}\nzVelocity=%s\ncollObjs=%s"%(self.player.state, str(self.player.actor.getPos()), str(self.player.actor.getHpr()), str(self.player.zOffset), str(self.player.terrainZone), str(self.player.terrainSurfZ), str(self.player.zVelocity), str(self.player.collidedObjects)))
         return task.cont

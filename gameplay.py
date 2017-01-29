@@ -14,10 +14,15 @@ def addLabel(base, text):
 
 class Gameplay:
 
+    MIN_CAM_PLAYER_DISTANCE=5
+    MAX_CAM_PLAYER_DISTANCE=10
+
     def __init__(self, base):
         self.base=base
         # hud
         self.label=addLabel(self.base, "?")
+        # camera
+        self.cam=self.base.camera
         
     def start(self):
         log.info("start...")
@@ -27,18 +32,33 @@ class Gameplay:
         # meshes
         self.terrain=Terrain(self.base)
         self.player=Player(self.base)
+        self.player.actor.setPos(self.terrain.startPos)
         # camera
-        self.base.camera.setPos(1, -39, 1)
+        self.cam.reparentTo(self.player.actor)
+        self.cam.setPos(0, 5, 1.5)
+        self.cam.lookAt(self.player.camNode)
         # task
-        self.base.taskMgr.add(self.update, "gameplayUpdateTask")
+        #self.base.taskMgr.add(self.update, "gameplayUpdateTask")
         log.info("started.")
     
     def stop(self):
         log.info("stop...")
         self.base.taskMgr.remove("gameplayUpdateTask")
-        self.terrain=None
+        self.player.destroy()
+        self.terrain.destroy()
         log.info("stoped.")
 
     def update(self, task):
-        self.label.setText("Player state:{state:'%s',pos:%s,hpr=%s,zoff:%s}.\nTerrain:{zone:'%s',surfz:%s}\nzVelocity=%s\ncollObjs=%s"%(self.player.state, str(self.player.actor.getPos()), str(self.player.actor.getHpr()), str(self.player.zOffset), str(self.player.terrainZone), str(self.player.terrainSurfZ), str(self.player.zVelocity), str(self.player.collidedObjects)))
+        #self.label.setText("Player state:{state:'%s',pos:%s,hpr=%s,zoff:%s}.\nTerrain:{zone:'%s',surfz:%s}\nzVelocity=%s\ncollObjs=%s\nkeyState=%s"%(self.player.state, str(self.player.actor.getPos()), str(self.player.actor.getHpr()), str(self.player.zOffset), str(self.player.terrainZone), str(self.player.terrainSurfZ), str(self.player.zVelocity), str(self.player.collidedObjects), str(self.player.keyState)))
+        # camera
+        camVec=self.cam.getPos()-self.player.actor.getPos()
+        camVec.setZ(0)
+        camDist=camVec.length()
+        camVec.normalize()
+        if camDist>Gameplay.MAX_CAM_PLAYER_DISTANCE:
+            self.cam.setPos(self.cam.getPos()+camVec*(camDist-Gameplay.MAX_CAM_PLAYER_DISTANCE))
+        if camDist<Gameplay.MIN_CAM_PLAYER_DISTANCE:
+            self.cam.setPos(self.cam.getPos()-camVec*(Gameplay.MIN_CAM_PLAYER_DISTANCE-camDist))
+        camVec.setZ(2)
+        self.cam.lookAt(self.player.actor)
         return task.cont

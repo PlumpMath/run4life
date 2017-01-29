@@ -9,10 +9,13 @@ class Game(ShowBase):
     def __init__(self):
         ShowBase.__init__(self)
         logging.basicConfig(level=logging.DEBUG)
-        log.info("Initializing Game...")
+        log.info("initializing...")
         #
         self.disableMouse()
+        self.setFrameRateMeter(True)
         self.render.setShaderAuto()
         #
         gameplay=Gameplay(self)
         gameplay.start()
+        #
+        log.info("done initializing")

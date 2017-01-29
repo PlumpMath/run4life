@@ -1,4 +1,6 @@
-from panda3d.core import CollideMask, CollisionNode, CollisionRay, CollisionSphere, CollisionHandlerQueue
+from panda3d.core import CollideMask, CollisionNode, CollisionRay, CollisionSphere, CollisionHandlerQueue, CollisionHandlerPusher
+from panda3d.core import NodePath
+from panda3d.core import KeyboardButton
 from direct.actor.Actor import Actor
 
 import logging
@@ -8,7 +10,7 @@ class Player:
 
         STATE_IDLE="Idle"
         STATE_WALK="Walk"
-        STATE_RUN="Walk"
+        STATE_RUN="Run"
         STATE_JUMP="Jump"
         STATE_FALL="Fall"
         
@@ -30,6 +32,7 @@ class Player:
                 "RotateR":False, 
                 "Jump":False
                 }
+            self.isKeyDown=self.base.mouseWatcherNode.isButtonDown
             self.state=Player.STATE_IDLE
             self.walkDir=0
             self.rotationDir=0
@@ -41,7 +44,11 @@ class Player:
             # actor
             self.actor=Actor("models/player")
             self.actor.reparentTo(self.base.render)
-            self.actor.setPos(0, -31.1, 0.2)
+            self.actor.setH(180)
+            # camara point
+            self.camNode=NodePath("camNode")
+            self.camNode.reparentTo(self.actor)
+            self.camNode.setPos(0, 0, 1)
             # collision
             #   ray
             collRay=CollisionRay(0, 0, 1, 0, 0, -1)
@@ -50,38 +57,48 @@ class Player:
             collRayN.setFromCollideMask(1)
             collRayN.setIntoCollideMask(CollideMask.allOff())
             collRayNP=self.actor.attachNewNode(collRayN)
-            collRayNP.show()
+            #collRayNP.show()
             self.collQRay=CollisionHandlerQueue()
             self.base.cTrav.addCollider(collRayNP, self.collQRay)
-            #   sphere
-            collSphere=CollisionSphere(0, 0, 0.5, 0.25)
-            collSphereN=CollisionNode("playerCollSphere")
-            collSphereN.addSolid(collSphere)
-            collSphereN.setFromCollideMask(2)
-            collSphereN.setIntoCollideMask(CollideMask.allOff())
-            collSphereNP=self.actor.attachNewNode(collSphereN)
-            collSphereNP.show()
+            #   sphere mask 2
+            collSphere2=CollisionSphere(0, 0, 0.5, 0.25)
+            collSphere2N=CollisionNode("playerCollSphere2")
+            collSphere2N.addSolid(collSphere2)
+            collSphere2N.setFromCollideMask(2)
+            collSphere2N.setIntoCollideMask(CollideMask.allOff())
+            collSphere2NP=self.actor.attachNewNode(collSphere2N)
+            #collSphere2NP.show()
+            self.collPSphere=CollisionHandlerPusher()
+            self.collPSphere.addCollider(collSphere2NP, self.actor)
+            self.base.cTrav.addCollider(collSphere2NP, self.collPSphere)
+            #   sphere mask 3
+            collSphere3=CollisionSphere(0, 0, 0.35, 0.4)
+            collSphere3N=CollisionNode("playerCollSphere3")
+            collSphere3N.addSolid(collSphere3)
+            collSphere3N.setFromCollideMask(3)
+            collSphere3N.setIntoCollideMask(CollideMask.allOff())
+            collSphere3NP=self.actor.attachNewNode(collSphere3N)
+            #collSphere3NP.show()
             self.collQSphere=CollisionHandlerQueue()
-            self.base.cTrav.addCollider(collSphereNP, self.collQSphere)
-            # keys
-            self.actor.accept("shift", self.setKeyState, ["Run", True])
-            self.actor.accept("arrow_up", self.setKeyState, ["WalkFw", True])
-            self.actor.accept("arrow_up-up", self.setKeyState, ["WalkFw", False])
-            self.actor.accept("arrow_down", self.setKeyState, ["WalkBw", True])
-            self.actor.accept("arrow_down-up", self.setKeyState, ["WalkBw", False])
-            self.actor.accept("arrow_left", self.setKeyState, ["RotateL", True])
-            self.actor.accept("arrow_left-up", self.setKeyState, ["RotateL", False])
-            self.actor.accept("arrow_right", self.setKeyState, ["RotateR", True])
-            self.actor.accept("arrow_right-up", self.setKeyState, ["RotateR", False])
-            self.actor.accept("j", self.setKeyState, ["Jump", True])
-            self.actor.accept("j-up", self.setKeyState, ["Jump", False])
+            self.base.cTrav.addCollider(collSphere3NP, self.collQSphere)
             # task
             self.base.taskMgr.add(self.update, "playerUpdateTask")
         
-        def setKeyState(self, key, state):
-            if not self.keyState[key]==state:
-                log.debug("setKeyState %s->%s"%(key, str(state)))
-                self.keyState[key]=state
+        def defineKeys(self):
+            for k in self.keyState.keys():
+                self.keyState[k]=False
+            if self.isKeyDown(KeyboardButton.up()):
+                self.keyState["WalkFw"]=True
+            if self.isKeyDown(KeyboardButton.down()):
+                self.keyState["WalkBw"]=True
+            if self.isKeyDown(KeyboardButton.left()):
+                self.keyState["RotateL"]=True
+            if self.isKeyDown(KeyboardButton.right()):
+                self.keyState["RotateR"]=True
+            if self.isKeyDown(KeyboardButton.shift()):
+                self.keyState["Run"]=True
+            if self.isKeyDown(KeyboardButton.asciiKey("j")):
+                self.keyState["Jump"]=True
         
         def defineState(self):
             # keys states
@@ -90,16 +107,19 @@ class Player:
             if self.state==Player.STATE_IDLE:
                 # Walk
                 if ks["WalkFw"] or ks["WalkBw"] or ks["RotateL"] or ks["RotateR"]:
-                    if ks["Run"]:
-                        self.state=Player.STATE_RUN
-                    else:
-                        self.state=Player.STATE_WALK
+                    self.state=Player.STATE_WALK
                     log.debug("new state: %s"%str(self.state))
                 elif ks["Jump"]:
                     self.state=Player.STATE_JUMP
                     log.debug("new state: %s"%str(self.state))
             # from Walk -> Idle
             elif self.state==Player.STATE_WALK or self.state==Player.STATE_RUN:
+                if ks["Run"] and self.state!=Player.STATE_RUN:
+                    self.state=Player.STATE_RUN
+                    log.debug("new state: %s"%str(self.state))
+                elif not ks["Run"] and self.state==Player.STATE_RUN:
+                    self.state=Player.STATE_WALK
+                    log.debug("new state: %s"%str(self.state))
                 if ks["WalkFw"]:
                     self.walkDir=-1
                 elif ks["WalkBw"]:
@@ -131,10 +151,10 @@ class Player:
         def processState(self, dt):
             # walk
             if self.walkDir!=0:
-                speed=0.6 if self.state==Player.STATE_RUN else 0.3
+                speed=3.6 if self.state==Player.STATE_RUN else 2.4
                 self.actor.setY(self.actor, speed*self.walkDir*dt)
             if self.rotationDir!=0:
-                self.actor.setH(self.actor.getH()+15*self.rotationDir)
+                self.actor.setH(self.actor.getH()+3.5*self.rotationDir)
             # jump
             if self.state==Player.STATE_JUMP:
                 self.zVelocity=Player.JUMP_ACCEL*dt
@@ -177,9 +197,9 @@ class Player:
         def onTerrainZoneChanged(self, zone):
             log.debug("terrain zone chaged to: %i"%zone)
         
-        def processObstaclesRelation(self):
+        def fillCollidedObjectsList(self):
             self.collidedObjects=list()
-            collEntries=list(self.collQSphere.getEntries())
+            collEntries=list(self.collPSphere.getEntries())
             if len(collEntries)==0:
                 return
             for entry in collEntries:
@@ -191,18 +211,20 @@ class Player:
         def update(self, task):
             # clock
             dt=self.base.taskMgr.globalClock.getDt()
+            # keys
+            self.defineKeys()
             # terrain relation
             newZone, self.terrainSurfZ, self.zOffset=self.processTerrainRelation()
             if newZone!=self.terrainZone:
                 self.terrainZone=newZone
                 self.onTerrainZoneChanged(self.terrainZone)
-            if self.zOffset>0.5 and self.state!=Player.STATE_FALL:
+            if self.zOffset>0.1 and self.state!=Player.STATE_FALL:
                 self.state=Player.STATE_FALL
                 log.debug("new state: %s"%str(self.state))
             elif self.zOffset<=0:
                 self.actor.setZ(self.terrainSurfZ)
             # obstacles relation
-            self.processObstaclesRelation()
+            #self.fillCollidedObjectsList()
             # state
             self.defineState()
             self.processState(dt)

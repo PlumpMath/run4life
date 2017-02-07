@@ -1,6 +1,7 @@
-from panda3d.core import Vec2, Vec4
+from panda3d.core import Vec4, Vec2
 from panda3d.core import DirectionalLight, PointLight #AmbientLight,
 from panda3d.core import CollisionNode, CollisionSphere, CollideMask, CollisionTube
+from panda3d.core import NodePath, LODNode
 
 import logging
 log=logging.getLogger(__name__)
@@ -24,7 +25,7 @@ class Terrain:
         # start position
         self.startPos=self.model.find("**/StartPosition").getPos()
         # sky
-        #sky=self.model.find("**/Sky")
+        #sky=self.model.find("**/Sky2")
         #skyMaterial=sky.findMaterial("Sky")
         #skyMaterial.setAmbient(Terrain.COLOR_SKY)
         #skyMaterial.setEmission(Terrain.COLOR_AMB_30)
@@ -36,25 +37,36 @@ class Terrain:
         #   point
         plight=PointLight("plight")
         plight.setColor(Vec4(Terrain.COLOR_WHITE))
-        plightP=self.base.render.attachNewNode(plight)
-        plightP.setPos(14, -30, 17)
+        self.plightP=self.base.render.attachNewNode(plight)
+        self.plightP.setPos(14, -30, 17)
         #   directional
+        #   sun
         sun=DirectionalLight("sun")
         sun.setColor(Vec4(Terrain.COLOR_WHITE))
-        #sun.setShadowCaster(True, 512, 512)
-        sun.getLens().setFilmSize(Vec2(30, 30))
-        sun.getLens().setNearFar(10, 100)
-        sun.getLens().setFov(100)
+        sun.setShadowCaster(True, 1024, 1024)
+        sun.getLens().setFilmSize(Vec2(100, 100))
+        sun.getLens().setNearFar(10, 200)
+        sun.getLens().setFov(200)
         sun.showFrustum()
         sunP=self.base.render.attachNewNode(sun)
-        sunP.setPos(14, -30, 17)
-        sunP.setHpr(10, -60, 10)
+        sunP.setPos(0, -2, 20)
+        sunP.setHpr(0, -90, 0)
+        #   sky
+        sunSky=DirectionalLight("sunSky")
+        sunSky.setColor(Vec4(Terrain.COLOR_WHITE))
+        sunSkyP=self.base.render.attachNewNode(sunSky)
+        sunSkyP.setPos(-14, 30, -17)
+        sunSkyP.setHpr(-10, 60, -10)
         #
         #self.base.render.setLight(alightP)
         self.base.render.setLight(sunP)
-        self.base.render.setLight(plightP)
+        self.base.render.setLight(self.plightP)
+        #sky.setLightOff()
+        #sky.setLight(sunSkyP)
         # collision objects
-        self.createCollisionObjects()
+        #self.createCollisionObjects()
+        # LOD
+        #self.setUpLOD()
         #
         log.info("done initializing...")
     
@@ -68,9 +80,9 @@ class Terrain:
             log.debug("- setting collision mesh to object %s..."%name)
             collSolid=None
             if name.startswith("Tree."):
-                collSolid=CollisionTube(0, 0, 0, 0, 0, 1, 1)
+                collSolid=CollisionTube(0, 0, 0.1, 0, 0, 1, 1)
             elif name.startswith("Rock."):
-                collSolid=CollisionSphere(0, 0, 0.85, 1)
+                collSolid=CollisionSphere(0, 0, 0.85, 1.5)
             collSphereN=CollisionNode("%s.CollNode"%name)
             collSphereN.addSolid(collSolid)
             collSphereN.setFromCollideMask(CollideMask.allOff())
@@ -85,3 +97,30 @@ class Terrain:
             if name.startswith("Tree.") or name.startswith("Rock.Big."):
                 objectList.append(child)
             self.gatherCollidableObjects(child, objectList)
+
+    def gatherObjectsForLOD(self, parent, objectList):
+        for child in parent.getChildren():
+            type=child.node().getClassType().getName()
+            if type!="GeomNode" and type!="PandaNode":
+                log.debug("  rejected %s"%child.node().getClassType().getName())
+                continue
+            name=child.getName()
+            if name.startswith("Tree.") or name.startswith("Rock.") or name.startswith("Grass"):
+                objectList.append(child)
+            if type=="PandaNode": continue # skip processing children 
+            self.gatherObjectsForLOD(child, objectList)
+
+    def setUpLOD(self):
+        log.info("creating LOD nodes...")
+        objects=list()
+        self.gatherObjectsForLOD(self.model, objects)
+        log.info("gathered %i objects LOD setup"%len(objects))
+        for object in objects:
+            parent=object.getParent()
+            name=object.getName()
+            log.debug("- creating LOD node for %s..."%name)
+            lod=LODNode("%s.LOD"%name)
+            lod.addSwitch(30.0, 0.0)
+            lodNP=NodePath(lod)
+            lodNP.reparentTo(parent)
+            object.reparentTo(lodNP)

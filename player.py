@@ -14,7 +14,7 @@ class Player:
         STATE_JUMP="Jump"
         STATE_FALL="Fall"
         
-        JUMP_ACCEL=63
+        JUMP_ACCEL=3.5
         FALL_ACCEL=-9.81
     
         TERRAIN_NONE=0
@@ -38,13 +38,15 @@ class Player:
             self.rotationDir=0
             self.zVelocity=0
             self.zOffset=None
+            self.jumpHeight=None
             self.terrainZone=Player.TERRAIN_NONE
             self.terrainSurfZ=None
             self.collidedObjects=list()
             # actor
-            self.actor=Actor("models/player")
+            anims={"idle":"models/player-idle","walk":"models/player-walk", "run":"models/player-run", "jump":"models/player-jump"}
+            self.actor=Actor("models/player", anims)
             self.actor.reparentTo(self.base.render)
-            self.actor.setH(180)
+            self.actor.setH(200)
             # camara point
             self.camNode=NodePath("camNode")
             self.camNode.reparentTo(self.actor)
@@ -80,7 +82,7 @@ class Player:
             collSphere3NP=self.actor.attachNewNode(collSphere3N)
             #collSphere3NP.show()
             self.collQSphere=CollisionHandlerQueue()
-            self.base.cTrav.addCollider(collSphere3NP, self.collQSphere)
+            #self.base.cTrav.addCollider(collSphere3NP, self.collQSphere)
             # task
             self.base.taskMgr.add(self.update, "playerUpdateTask")
         
@@ -101,25 +103,26 @@ class Player:
                 self.keyState["Jump"]=True
         
         def defineState(self):
+            #
+            newState=self.state
             # keys states
             ks=self.keyState
+            # state force
+            if self.zOffset>0.2 and self.state!=Player.STATE_FALL:
+                newState=Player.STATE_FALL
             # from Idle -> Walk, Jump
             if self.state==Player.STATE_IDLE:
                 # Walk
                 if ks["WalkFw"] or ks["WalkBw"] or ks["RotateL"] or ks["RotateR"]:
-                    self.state=Player.STATE_WALK
-                    log.debug("new state: %s"%str(self.state))
+                    newState=Player.STATE_WALK
                 elif ks["Jump"]:
-                    self.state=Player.STATE_JUMP
-                    log.debug("new state: %s"%str(self.state))
+                    newState=Player.STATE_JUMP
             # from Walk -> Idle
             elif self.state==Player.STATE_WALK or self.state==Player.STATE_RUN:
                 if ks["Run"] and self.state!=Player.STATE_RUN:
-                    self.state=Player.STATE_RUN
-                    log.debug("new state: %s"%str(self.state))
+                    newState=Player.STATE_RUN
                 elif not ks["Run"] and self.state==Player.STATE_RUN:
-                    self.state=Player.STATE_WALK
-                    log.debug("new state: %s"%str(self.state))
+                    newState=Player.STATE_WALK
                 if ks["WalkFw"]:
                     self.walkDir=-1
                 elif ks["WalkBw"]:
@@ -133,22 +136,23 @@ class Player:
                 elif not ks["RotateL"] and not ks["RotateR"]:
                     self.rotationDir=0
                 if self.walkDir==0 and self.rotationDir==0:
-                    self.state=Player.STATE_IDLE
-                    log.debug("new state: %s"%str(self.state))
+                    newState=Player.STATE_IDLE
             # from Jump -> Fall
             elif self.state==Player.STATE_JUMP:
                 if self.zVelocity>0:
-                    self.state=Player.STATE_FALL
-                    log.debug("new state: %s"%str(self.state))
+                    newState=Player.STATE_FALL
             # from Fall -> Idle
             elif self.state==Player.STATE_FALL:
                 if self.zOffset<=0:
-                    self.state=Player.STATE_IDLE
-                    log.debug("new state: %s"%str(self.state))
+                    newState=Player.STATE_IDLE
+                    self.jumpHeight=None
                     self.zVelocity=0
-                    #self.actor.setZ(self.terrainSurfZ)
+            return newState
         
         def processState(self, dt):
+            # terrain sdjustment
+            if self.zOffset<=0:
+                self.actor.setZ(self.terrainSurfZ)
             # walk
             if self.walkDir!=0:
                 speed=3.6 if self.state==Player.STATE_RUN else 2.4
@@ -157,13 +161,17 @@ class Player:
                 self.actor.setH(self.actor.getH()+3.5*self.rotationDir)
             # jump
             if self.state==Player.STATE_JUMP:
-                self.zVelocity=Player.JUMP_ACCEL*dt
+                self.zVelocity=Player.JUMP_ACCEL#*dt
                 log.debug("jump start at v=%f"%self.zVelocity)
             # fall
             if self.state==Player.STATE_FALL:
                 dZ=self.zVelocity*dt
                 dV=Player.FALL_ACCEL*dt
-                newZ=self.actor.getZ()+dZ
+                curZ=self.actor.getZ()
+                newZ=curZ+dZ
+                if self.jumpHeight==None and newZ<curZ:
+                    self.jumpHeight=self.zOffset
+                    log.debug("jump height=%f"%self.jumpHeight)
                 log.debug("falling... dt=%(dt)f getZ=%(getZ)f v=%(v)f dZ=%(dZ)f newZ=%(newZ)f dV=%(dV)f zOffset=%(zOff)f"%{"dt":dt, "getZ":self.actor.getZ(), "v":self.zVelocity, "dZ":dZ, "newZ":newZ, "dV":dV, "zOff":self.zOffset})
                 if newZ<self.terrainSurfZ: newZ=self.terrainSurfZ
                 self.actor.setZ(newZ)
@@ -197,6 +205,20 @@ class Player:
         def onTerrainZoneChanged(self, zone):
             log.debug("terrain zone chaged to: %i"%zone)
         
+        def onStateChanged(self, newState):
+            log.debug("new state: %s"%str(newState))
+            #self.actor.stop()
+            if newState==Player.STATE_IDLE:
+                self.actor.pose("idle", 0)
+            elif newState==Player.STATE_WALK:
+                self.actor.setPlayRate(4.0, "walk")
+                self.actor.loop("walk")
+            elif newState==Player.STATE_RUN:
+                self.actor.loop("run")
+            elif newState==Player.STATE_JUMP:
+                self.actor.setPlayRate(1.4, "jump")
+                self.actor.play("jump", fromFrame=20, toFrame=59)
+        
         def fillCollidedObjectsList(self):
             self.collidedObjects=list()
             collEntries=list(self.collPSphere.getEntries())
@@ -218,15 +240,13 @@ class Player:
             if newZone!=self.terrainZone:
                 self.terrainZone=newZone
                 self.onTerrainZoneChanged(self.terrainZone)
-            if self.zOffset>0.1 and self.state!=Player.STATE_FALL:
-                self.state=Player.STATE_FALL
-                log.debug("new state: %s"%str(self.state))
-            elif self.zOffset<=0:
-                self.actor.setZ(self.terrainSurfZ)
             # obstacles relation
             #self.fillCollidedObjectsList()
             # state
-            self.defineState()
+            newState=self.defineState()
+            if self.state!=newState:
+                self.onStateChanged(newState)
+                self.state=newState
             self.processState(dt)
             # move
             return task.cont

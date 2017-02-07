@@ -32,10 +32,12 @@ class Gameplay:
         # meshes
         self.terrain=Terrain(self.base)
         self.player=Player(self.base)
-        self.player.actor.setPos(self.terrain.startPos)
+        #self.player.actor.setPos(self.terrain.startPos)
+        self.terrain.plightP.reparentTo(self.player.actor)
+        self.terrain.plightP.setPos(0, 3, 10)
         # camera
         self.cam.reparentTo(self.player.actor)
-        self.cam.setPos(0, 5, 1.5)
+        self.cam.setPos(0, 4, 1.5)
         self.cam.lookAt(self.player.camNode)
         # task
         #self.base.taskMgr.add(self.update, "gameplayUpdateTask")

@@ -32,7 +32,7 @@ class Gameplay:
         # meshes
         self.terrain=Terrain(self.base)
         self.player=Player(self.base)
-        #self.player.actor.setPos(self.terrain.startPos)
+        self.player.actor.setPos(self.terrain.startPos)
         self.terrain.plightP.reparentTo(self.player.actor)
         self.terrain.plightP.setPos(0, 3, 10)
         # camera

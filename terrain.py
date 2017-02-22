@@ -1,7 +1,5 @@
 from panda3d.core import Vec4, Vec2
 from panda3d.core import DirectionalLight, PointLight #AmbientLight,
-from panda3d.core import CollisionNode, CollisionSphere, CollideMask, CollisionTube
-from panda3d.core import NodePath, LODNode
 
 import logging
 log=logging.getLogger(__name__)
@@ -50,7 +48,7 @@ class Terrain:
         sun.showFrustum()
         sunP=self.base.render.attachNewNode(sun)
         sunP.setPos(0, -2, 20)
-        sunP.setHpr(0, -90, 0)
+        sunP.setHpr(-60, -90, -30)
         #   sky
         sunSky=DirectionalLight("sunSky")
         sunSky.setColor(Vec4(Terrain.COLOR_WHITE))
@@ -63,64 +61,5 @@ class Terrain:
         self.base.render.setLight(self.plightP)
         #sky.setLightOff()
         #sky.setLight(sunSkyP)
-        # collision objects
-        #self.createCollisionObjects()
-        # LOD
-        #self.setUpLOD()
         #
         log.info("done initializing...")
-    
-    def createCollisionObjects(self):
-        log.info("creating collision objects...")
-        objects=list()
-        self.gatherCollidableObjects(self.model, objects)
-        log.info("gathered %i objects for collision"%len(objects))
-        for object in objects:
-            name=object.getName()
-            log.debug("- setting collision mesh to object %s..."%name)
-            collSolid=None
-            if name.startswith("Tree."):
-                collSolid=CollisionTube(0, 0, 0.1, 0, 0, 1, 1)
-            elif name.startswith("Rock."):
-                collSolid=CollisionSphere(0, 0, 0.85, 1.5)
-            collSphereN=CollisionNode("%s.CollNode"%name)
-            collSphereN.addSolid(collSolid)
-            collSphereN.setFromCollideMask(CollideMask.allOff())
-            collSphereN.setIntoCollideMask(2)
-            #collSphereNP=
-            object.attachNewNode(collSphereN)
-            #collSphereNP.show()
-
-    def gatherCollidableObjects(self, parent, objectList):
-        for child in parent.getChildren():
-            name=child.getName()
-            if name.startswith("Tree.") or name.startswith("Rock.Big."):
-                objectList.append(child)
-            self.gatherCollidableObjects(child, objectList)
-
-    def gatherObjectsForLOD(self, parent, objectList):
-        for child in parent.getChildren():
-            type=child.node().getClassType().getName()
-            if type!="GeomNode" and type!="PandaNode":
-                log.debug("  rejected %s"%child.node().getClassType().getName())
-                continue
-            name=child.getName()
-            if name.startswith("Tree.") or name.startswith("Rock.") or name.startswith("Grass"):
-                objectList.append(child)
-            if type=="PandaNode": continue # skip processing children 
-            self.gatherObjectsForLOD(child, objectList)
-
-    def setUpLOD(self):
-        log.info("creating LOD nodes...")
-        objects=list()
-        self.gatherObjectsForLOD(self.model, objects)
-        log.info("gathered %i objects LOD setup"%len(objects))
-        for object in objects:
-            parent=object.getParent()
-            name=object.getName()
-            log.debug("- creating LOD node for %s..."%name)
-            lod=LODNode("%s.LOD"%name)
-            lod.addSwitch(30.0, 0.0)
-            lodNP=NodePath(lod)
-            lodNP.reparentTo(parent)
-            object.reparentTo(lodNP)

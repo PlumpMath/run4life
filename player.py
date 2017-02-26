@@ -16,6 +16,9 @@ class Player:
         STATE_FALL="Fall"
         STATE_DUCK="Duck"
         STATE_UN_DUCK="UnDuck"
+        STATE_FLOAT="Float"
+        STATE_SWIM="Swim"
+        SUB_STATE_GRAB="Grab"
         
         JUMP_ACCEL=3.5
         FALL_ACCEL=-9.81
@@ -43,6 +46,7 @@ class Player:
                 }
             self.isKeyDown=self.base.mouseWatcherNode.isButtonDown
             self.state=Player.STATE_IDLE
+            self.sub_state=None
             self.walkDir=0
             self.rotationDir=0
             self.zVelocity=0
@@ -53,7 +57,9 @@ class Player:
             self.waterDepth=0
             self.collidedObjects=list()
             # actor
-            anims={"idle":"models/player-idle","walk":"models/player-walk", "run":"models/player-run", "jump":"models/player-jump", "duck":"models/player-duck"}
+            anims={"idle":"models/player-idle","walk":"models/player-walk", "run":"models/player-run", 
+                         "jump":"models/player-jump", "duck":"models/player-duck", "float":"models/player-float", 
+                         "swim":"models/player-swim", "grab":"models/player-grab"}
             self.actor=Actor("models/player", anims)
             self.actor.reparentTo(self.base.render)
             self.actor.setH(200)
@@ -73,7 +79,6 @@ class Player:
             collRayN.setFromCollideMask(1)
             collRayN.setIntoCollideMask(CollideMask.allOff())
             collRayNP=self.actor.attachNewNode(collRayN)
-            #collRayNP.show()
             self.collQRay=CollisionHandlerQueue()
             self.base.cTrav.addCollider(collRayNP, self.collQRay)
             #   sphere mask 2
@@ -83,21 +88,11 @@ class Player:
             collSphere2N.setFromCollideMask(2)
             collSphere2N.setIntoCollideMask(CollideMask.allOff())
             self.collSphere2NP=self.actor.attachNewNode(collSphere2N)
-            #self.collSphere2NP.show()
             self.collPSphere=CollisionHandlerPusher()
             self.collPSphere.addCollider(self.collSphere2NP, self.actor)
             self.base.cTrav.addCollider(self.collSphere2NP, self.collPSphere)
-            #   sphere mask 3
-            collSphere3=CollisionSphere(0, 0, 0.35, 0.4)
-            collSphere3N=CollisionNode("playerCollSphere3")
-            collSphere3N.addSolid(collSphere3)
-            collSphere3N.setFromCollideMask(3)
-            collSphere3N.setIntoCollideMask(CollideMask.allOff())
-            #collSphere3NP=
-            self.actor.attachNewNode(collSphere3N)
-            #collSphere3NP.show()
-            self.collQSphere=CollisionHandlerQueue()
-            #self.base.cTrav.addCollider(collSphere3NP, self.collQSphere)
+            # key events
+            self.base.accept("i", self.dump_info)
             # task
             self.base.taskMgr.add(self.update, "playerUpdateTask")
         
@@ -181,7 +176,7 @@ class Player:
         
         def processState(self, dt):
             # terrain sdjustment
-            if self.zOffset<=0:
+            if self.zOffset<=0.2 and not self.state==Player.STATE_FALL:
                 self.actor.setZ(self.terrainSurfZ)
             # idle
             if self.state==Player.STATE_IDLE:
@@ -250,26 +245,9 @@ class Player:
                         newZone=Player.TERRAIN_GROUND
             if newZone==Player.TERRAIN_WATER:
                 waterDepth=gndZ-wtrZ
-                log.debug("water depth is %f"%waterDepth)
+                #log.debug("water depth is %f"%waterDepth)
             zOffset=self.actor.getZ()-gndZ
             return newZone, gndZ, zOffset, waterDepth
-#            ###
-#            entries=list(collEntries)
-#            entries.sort(key=lambda x:x.getSurfacePoint(self.base.render).getZ())
-#            entryName=entries[-1].getIntoNodePath().getName()
-#            #
-#            groundEntries=[ge for ge in entries if not ge.getIntoNodePath().getName().startswith("Water")]
-#            groundEntries.sort(key=lambda x:x.getSurfacePoint(self.base.render).getZ())
-#            terrainSurfZ=groundEntries[-1].getSurfacePoint(self.base.render).getZ()
-#            #
-#            zOffset=self.actor.getZ()-self.terrainSurfZ
-#            #log.debug("ray collision entry name: %s"%entryName)
-#            if entryName=="Ground" or entryName.startswith("Rock"):
-#                newZone=Player.TERRAIN_GROUND
-#            elif entryName.startswith("Water"):
-#                newZone=Player.TERRAIN_WATER
-#            return newZone, gndZ, zOffset
-        
         def onTerrainZoneChanged(self, zone):
             log.debug("terrain zone chaged to: %i"%zone)
         
@@ -278,7 +256,7 @@ class Player:
             log.debug("state change %s -> %s"%(str(curState), str(newState)))
             #self.actor.stop()
             if newState==Player.STATE_IDLE:
-                self.actor.pose("idle", 0)
+                self.actor.loop("idle")
             elif newState==Player.STATE_WALK:
                 self.actor.setPlayRate(4.0, "walk")
                 self.actor.loop("walk")
@@ -296,16 +274,8 @@ class Player:
                 self.actor.stop()
                 self.actor.play("duck", fromFrame=initFrame, toFrame=Player.DUCK_FRAME_COUNT)
         
-        def fillCollidedObjectsList(self):
-            self.collidedObjects=list()
-            collEntries=list(self.collPSphere.getEntries())
-            if len(collEntries)==0:
-                return
-            for entry in collEntries:
-                entryName=entry.getIntoNodePath().getName()
-                relPos=self.actor.getPos()-entry.getIntoNodePath().getPos()
-                relHpr=self.actor.getHpr()-entry.getIntoNodePath().getHpr()
-                self.collidedObjects.append("%s [%s,%s]"%(entryName, str(relPos), str(relHpr)))
+        def updateCollidedObjectsList(self):
+            pass
         
         def update(self, task):
             # clock
@@ -318,7 +288,7 @@ class Player:
                 self.terrainZone=newZone
                 self.onTerrainZoneChanged(self.terrainZone)
             # obstacles relation
-            #self.fillCollidedObjectsList()
+            self.updateCollidedObjectsList()
             # state
             newState=self.defineState()
             if self.state!=newState:
@@ -327,3 +297,12 @@ class Player:
             self.processState(dt)
             # move
             return task.cont
+
+        def dump_info(self):
+            info="position: %s\n"%str(self.actor.getPos())
+            info+="hpr: %s\n"%str(self.actor.getHpr())
+            info+="state: %s; sub_state: %s\n"%(str(self.state), str(self.sub_state))
+            info+="terrainZone: %s\n"%str(self.terrainZone)
+            info+="terrainSurfZ: %s\n"%str(self.terrainSurfZ)
+            info+="zOffset: %s\n"%str(self.zOffset)
+            log.info("*INFO:\n%s"%info)

@@ -3,6 +3,7 @@ from panda3d.core import TextNode
 from direct.gui.OnscreenText import OnscreenText
 from terrain import Terrain
 from player import Player
+from zorrito import Zorrito
 
 import logging
 log=logging.getLogger(__name__)
@@ -29,10 +30,14 @@ class Gameplay:
         # collisions
         self.base.cTrav=CollisionTraverser()
         #self.base.cTrav.showCollisions(self.base.render)
-        # meshes
+        #self.base.messenger.toggleVerbose()
+        # objects
         self.terrain=Terrain(self.base)
         self.player=Player(self.base)
         self.player.actor.setPos(self.terrain.startPos)
+        self.zorrito=Zorrito(self.base)
+        self.zorrito.actor.setPos(self.terrain.zorritoStartPos)
+        #
         self.terrain.plightP.reparentTo(self.player.actor)
         self.terrain.plightP.setPos(0, 3, 10)
         # camera

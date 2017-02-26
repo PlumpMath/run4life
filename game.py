@@ -1,5 +1,6 @@
 from direct.showbase.ShowBase import ShowBase
 from gameplay import Gameplay
+from panda3d.core import PStatClient
 
 import logging
 log=logging.getLogger(__name__)
@@ -17,5 +18,7 @@ class Game(ShowBase):
         #
         gameplay=Gameplay(self)
         gameplay.start()
+        #
+        PStatClient.connect()
         #
         log.info("done initializing")

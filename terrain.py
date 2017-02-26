@@ -22,12 +22,23 @@ class Terrain:
         self.model.reparentTo(self.base.render)
         # start position
         self.startPos=self.model.find("**/StartPosition").getPos()
+        self.zorritoStartPos=self.model.find("**/ZorritoStartPos.000").getPos()
         # sky
-        #sky=self.model.find("**/Sky2")
-        #skyMaterial=sky.findMaterial("Sky")
-        #skyMaterial.setAmbient(Terrain.COLOR_SKY)
-        #skyMaterial.setEmission(Terrain.COLOR_AMB_30)
+        self.setUpSky()
         # lights
+        self.setUpLights()
+        # sticks
+        self.setUpSticks()
+        #
+        log.info("done initializing...")
+
+    def setUpSky(self):
+        sky=self.model.find("**/Sky2")
+        skyMaterial=sky.findMaterial("Sky")
+        skyMaterial.setAmbient(Terrain.COLOR_SKY)
+        skyMaterial.setEmission(Terrain.COLOR_AMB_30)
+        
+    def setUpLights(self):
         #   ambient
         #alight=AmbientLight("alight")
         #alight.setColor(Vec4(Terrain.COLOR_AMB_50))
@@ -62,4 +73,8 @@ class Terrain:
         #sky.setLightOff()
         #sky.setLight(sunSkyP)
         #
-        log.info("done initializing...")
+    
+    def setUpSticks(self):
+        self.stick=self.base.loader.loadModel("models/stick")
+        self.stick.reparentTo(self.model)
+        self.stick.setPos(self.startPos)

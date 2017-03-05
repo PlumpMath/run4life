@@ -1,0 +1,753 @@
+<CoordinateSystem> { Z-Up }
+
+<Comment> {
+  "egg-trans -tbnall -ps keep -o /home/flaco/gamedev/panda3d/projs/run4life/models/apple.egg /home/flaco/gamedev/panda3d/projs/run4life/models/apple.egg"
+}
+<Material> Fruit {
+  <Scalar> diffr { 0.49715 }
+  <Scalar> diffg { 0 }
+  <Scalar> diffb { 0.001047 }
+  <Scalar> ambr { 1 }
+  <Scalar> ambg { 1 }
+  <Scalar> ambb { 1 }
+  <Scalar> emitr { 0 }
+  <Scalar> emitg { 0 }
+  <Scalar> emitb { 0 }
+  <Scalar> specr { 0 }
+  <Scalar> specg { 0 }
+  <Scalar> specb { 0 }
+  <Scalar> shininess { 12.5 }
+}
+<Material> Cup.4 {
+  <Scalar> diffr { 0.007149 }
+  <Scalar> diffg { 0.123707 }
+  <Scalar> diffb { 0.002732 }
+  <Scalar> ambr { 1 }
+  <Scalar> ambg { 1 }
+  <Scalar> ambb { 1 }
+  <Scalar> emitr { 0 }
+  <Scalar> emitg { 0 }
+  <Scalar> emitb { 0 }
+  <Scalar> specr { 0 }
+  <Scalar> specg { 0 }
+  <Scalar> specb { 0 }
+  <Scalar> shininess { 12.5 }
+}
+<Group> Fruit {
+  <Transform> {
+    <Matrix4> {
+      1 0 0 0
+      0 1 0 0
+      0 0 1 0
+      -0.640278 -31.5097 0.97144 1
+    }
+  }
+  <VertexPool> Fruit {
+    <Vertex> 0 {
+      -0.636048 -31.5024 1.01748
+    }
+    <Vertex> 1 {
+      -0.631181 -31.5 1.02567
+    }
+    <Vertex> 2 {
+      -0.629137 -31.5015 1.02429
+    }
+    <Vertex> 3 {
+      -0.633687 -31.5042 1.01712
+    }
+    <Vertex> 4 {
+      -0.629468 -31.5039 1.02551
+    }
+    <Vertex> 5 {
+      -0.634515 -31.5068 1.01775
+    }
+    <Vertex> 6 {
+      -0.631761 -31.5037 1.02761
+    }
+    <Vertex> 7 {
+      -0.637402 -31.5066 1.0185
+    }
+    <Vertex> 8 {
+      -0.632847 -31.5013 1.02769
+    }
+    <Vertex> 9 {
+      -0.638365 -31.5039 1.01832
+    }
+    <Vertex> 10 {
+      -0.642374 -31.509 0.989496
+    }
+    <Vertex> 11 {
+      -0.641842 -31.5085 0.998367
+    }
+    <Vertex> 12 {
+      -0.639606 -31.5069 0.998247
+    }
+    <Vertex> 13 {
+      -0.640278 -31.5075 0.989482
+    }
+    <Vertex> 14 {
+      -0.641088 -31.5068 1.00829
+    }
+    <Vertex> 15 {
+      -0.638965 -31.5053 1.00793
+    }
+    <Vertex> 16 {
+      -0.641573 -31.5115 0.989496
+    }
+    <Vertex> 17 {
+      -0.640985 -31.511 0.998457
+    }
+    <Vertex> 18 {
+      -0.640075 -31.5094 1.00838
+    }
+    <Vertex> 19 {
+      -0.638966 -31.5115 0.989505
+    }
+    <Vertex> 20 {
+      -0.638237 -31.511 0.998381
+    }
+    <Vertex> 21 {
+      -0.637388 -31.5095 1.00809
+    }
+    <Vertex> 22 {
+      -0.638158 -31.509 0.989499
+    }
+    <Vertex> 23 {
+      -0.637396 -31.5085 0.998247
+    }
+    <Vertex> 24 {
+      -0.636663 -31.5069 1.00776
+    }
+    <Vertex> 25 {
+      -0.640278 -31.5097 0.933042
+    }
+    <Vertex> 26 {
+      -0.620657 -31.525 0.931678
+    }
+    <Vertex> 27 {
+      -0.647773 -31.5345 0.931573
+    }
+    <Vertex> 28 {
+      -0.606897 -31.5357 0.949114
+    }
+    <Vertex> 29 {
+      -0.601036 -31.5097 0.945424
+    }
+    <Vertex> 30 {
+      -0.664531 -31.5097 0.93174
+    }
+    <Vertex> 31 {
+      -0.647773 -31.4849 0.931573
+    }
+    <Vertex> 32 {
+      -0.620657 -31.4944 0.931678
+    }
+    <Vertex> 33 {
+      -0.596404 -31.525 0.970134
+    }
+    <Vertex> 34 {
+      -0.653029 -31.5518 0.949114
+    }
+    <Vertex> 35 {
+      -0.628152 -31.5498 0.945424
+    }
+    <Vertex> 36 {
+      -0.640278 -31.5592 0.970134
+    }
+    <Vertex> 37 {
+      -0.68154 -31.5097 0.949114
+    }
+    <Vertex> 38 {
+      -0.672026 -31.5345 0.945424
+    }
+    <Vertex> 39 {
+      -0.684152 -31.525 0.970134
+    }
+    <Vertex> 40 {
+      -0.653029 -31.4676 0.949114
+    }
+    <Vertex> 41 {
+      -0.672026 -31.4849 0.945424
+    }
+    <Vertex> 42 {
+      -0.667394 -31.4696 0.970134
+    }
+    <Vertex> 43 {
+      -0.606897 -31.4836 0.949114
+    }
+    <Vertex> 44 {
+      -0.628152 -31.4696 0.945424
+    }
+    <Vertex> 45 {
+      -0.613163 -31.4696 0.970134
+    }
+    <Vertex> 46 {
+      -0.613163 -31.5498 0.970134
+    }
+    <Vertex> 47 {
+      -0.667394 -31.5498 0.970134
+    }
+    <Vertex> 48 {
+      -0.684152 -31.4944 0.970134
+    }
+    <Vertex> 49 {
+      -0.640278 -31.4602 0.970134
+    }
+    <Vertex> 50 {
+      -0.596404 -31.4944 0.970134
+    }
+    <Vertex> 51 {
+      -0.627528 -31.5518 0.991153
+    }
+    <Vertex> 52 {
+      -0.608531 -31.5345 0.994844
+    }
+    <Vertex> 53 {
+      -0.632784 -31.5345 1.00327
+    }
+    <Vertex> 54 {
+      -0.67366 -31.5357 0.991153
+    }
+    <Vertex> 55 {
+      -0.652405 -31.5498 0.994844
+    }
+    <Vertex> 56 {
+      -0.659899 -31.525 1.00466
+    }
+    <Vertex> 57 {
+      -0.67366 -31.4836 0.991153
+    }
+    <Vertex> 58 {
+      -0.67952 -31.5097 0.994844
+    }
+    <Vertex> 59 {
+      -0.659899 -31.4944 1.00194
+    }
+    <Vertex> 60 {
+      -0.627528 -31.4676 0.991153
+    }
+    <Vertex> 61 {
+      -0.652405 -31.4696 0.994844
+    }
+    <Vertex> 62 {
+      -0.632784 -31.4849 1.00536
+    }
+    <Vertex> 63 {
+      -0.599017 -31.5097 0.991153
+    }
+    <Vertex> 64 {
+      -0.608531 -31.4849 0.994844
+    }
+    <Vertex> 65 {
+      -0.616025 -31.5097 1.00516
+    }
+    <Vertex> 66 {
+      -0.640278 -31.5097 0.989366
+    }
+  }
+  <Polygon> {
+    <Normal> { 0.391795 0.774691 -0.496337 }
+    <MRef> { Cup.4 }
+    <VertexRef> { 0 1 2 3 <Ref> { Fruit } }
+  }
+  <Polygon> {
+    <Normal> { 0.841241 -0.351487 -0.410818 }
+    <MRef> { Cup.4 }
+    <VertexRef> { 3 2 4 5 <Ref> { Fruit } }
+  }
+  <Polygon> {
+    <Normal> { 0.096261 -0.958208 0.269391 }
+    <MRef> { Cup.4 }
+    <VertexRef> { 5 4 6 7 <Ref> { Fruit } }
+  }
+  <Polygon> {
+    <Normal> { 0.66018 0.263547 0.703353 }
+    <MRef> { Cup.4 }
+    <VertexRef> { 2 1 8 6 4 <Ref> { Fruit } }
+  }
+  <Polygon> {
+    <Normal> { -0.773847 -0.30043 0.557587 }
+    <MRef> { Cup.4 }
+    <VertexRef> { 7 6 8 9 <Ref> { Fruit } }
+  }
+  <Polygon> {
+    <Normal> { -0.545753 0.834006 0.081168 }
+    <MRef> { Cup.4 }
+    <VertexRef> { 9 8 1 0 <Ref> { Fruit } }
+  }
+  <Polygon> {
+    <Normal> { -0.57885 0.815364 -0.010642 }
+    <MRef> { Cup.4 }
+    <VertexRef> { 10 11 12 13 <Ref> { Fruit } }
+  }
+  <Polygon> {
+    <Normal> { -0.58556 0.805056 -0.094893 }
+    <MRef> { Cup.4 }
+    <VertexRef> { 11 14 15 12 <Ref> { Fruit } }
+  }
+  <Polygon> {
+    <Normal> { -0.581901 0.81028 -0.069554 }
+    <MRef> { Cup.4 }
+    <VertexRef> { 14 9 0 15 <Ref> { Fruit } }
+  }
+  <Polygon> {
+    <Normal> { -0.946958 -0.312123 0.076486 }
+    <MRef> { Cup.4 }
+    <VertexRef> { 16 17 11 10 <Ref> { Fruit } }
+  }
+  <Polygon> {
+    <Normal> { -0.933219 -0.333842 0.132862 }
+    <MRef> { Cup.4 }
+    <VertexRef> { 17 18 14 11 <Ref> { Fruit } }
+  }
+  <Polygon> {
+    <Normal> { -0.890727 -0.315271 0.327427 }
+    <MRef> { Cup.4 }
+    <VertexRef> { 18 7 9 14 <Ref> { Fruit } }
+  }
+  <Polygon> {
+    <Normal> { -0.000897 -0.998769 0.04959 }
+    <MRef> { Cup.4 }
+    <VertexRef> { 19 20 17 16 <Ref> { Fruit } }
+  }
+  <Polygon> {
+    <Normal> { 0.000164 -0.987505 0.157585 }
+    <MRef> { Cup.4 }
+    <VertexRef> { 20 21 18 17 <Ref> { Fruit } }
+  }
+  <Polygon> {
+    <Normal> { 0.017176 -0.964354 0.264059 }
+    <MRef> { Cup.4 }
+    <VertexRef> { 21 5 7 18 <Ref> { Fruit } }
+  }
+  <Polygon> {
+    <Normal> { 0.947254 -0.314187 -0.063219 }
+    <MRef> { Cup.4 }
+    <VertexRef> { 22 23 20 19 <Ref> { Fruit } }
+  }
+  <Polygon> {
+    <Normal> { 0.955016 -0.294982 -0.030489 }
+    <MRef> { Cup.4 }
+    <VertexRef> { 23 24 21 20 <Ref> { Fruit } }
+  }
+  <Polygon> {
+    <Normal> { 0.929044 -0.314176 -0.195371 }
+    <MRef> { Cup.4 }
+    <VertexRef> { 24 3 5 21 <Ref> { Fruit } }
+  }
+  <Polygon> {
+    <Normal> { 0.577913 0.810327 -0.096885 }
+    <MRef> { Cup.4 }
+    <VertexRef> { 13 12 23 22 <Ref> { Fruit } }
+  }
+  <Polygon> {
+    <Normal> { 0.566005 0.805137 -0.177179 }
+    <MRef> { Cup.4 }
+    <VertexRef> { 12 15 24 23 <Ref> { Fruit } }
+  }
+  <Polygon> {
+    <Normal> { 0.512884 0.766594 -0.386372 }
+    <MRef> { Cup.4 }
+    <VertexRef> { 15 0 3 24 <Ref> { Fruit } }
+  }
+  <Polygon> {
+    <Normal> { -0.018763 0.064849 -0.997719 }
+    <MRef> { Fruit }
+    <VertexRef> { 25 26 27 <Ref> { Fruit } }
+  }
+  <Polygon> {
+    <Normal> { 0.678942 -0.250586 -0.690105 }
+    <MRef> { Fruit }
+    <VertexRef> { 28 26 29 <Ref> { Fruit } }
+  }
+  <Polygon> {
+    <Normal> { 0.053574 0.042956 -0.997639 }
+    <MRef> { Fruit }
+    <VertexRef> { 25 27 30 <Ref> { Fruit } }
+  }
+  <Polygon> {
+    <Normal> { 0.053574 -0.042956 -0.997639 }
+    <MRef> { Fruit }
+    <VertexRef> { 25 30 31 <Ref> { Fruit } }
+  }
+  <Polygon> {
+    <Normal> { -0.018763 -0.064849 -0.997719 }
+    <MRef> { Fruit }
+    <VertexRef> { 25 31 32 <Ref> { Fruit } }
+  }
+  <Polygon> {
+    <Normal> { 0.911174 -0.251323 -0.326494 }
+    <MRef> { Fruit }
+    <VertexRef> { 28 29 33 <Ref> { Fruit } }
+  }
+  <Polygon> {
+    <Normal> { 0.026412 -0.937826 -0.3461 }
+    <MRef> { Fruit }
+    <VertexRef> { 34 35 36 <Ref> { Fruit } }
+  }
+  <Polygon> {
+    <Normal> { -0.897436 -0.295999 -0.327099 }
+    <MRef> { Fruit }
+    <VertexRef> { 37 38 39 <Ref> { Fruit } }
+  }
+  <Polygon> {
+    <Normal> { -0.598541 0.726392 -0.337791 }
+    <MRef> { Fruit }
+    <VertexRef> { 40 41 42 <Ref> { Fruit } }
+  }
+  <Polygon> {
+    <Normal> { 0.558636 0.757027 -0.338875 }
+    <MRef> { Fruit }
+    <VertexRef> { 43 44 45 <Ref> { Fruit } }
+  }
+  <Polygon> {
+    <Normal> { 0.821601 -0.555914 -0.126223 }
+    <MRef> { Fruit }
+    <VertexRef> { 28 33 46 <Ref> { Fruit } }
+  }
+  <Polygon> {
+    <Normal> { -0.326563 -0.936005 -0.131348 }
+    <MRef> { Fruit }
+    <VertexRef> { 34 36 47 <Ref> { Fruit } }
+  }
+  <Polygon> {
+    <Normal> { -0.992364 0 -0.123342 }
+    <MRef> { Fruit }
+    <VertexRef> { 37 39 48 <Ref> { Fruit } }
+  }
+  <Polygon> {
+    <Normal> { -0.326563 0.936005 -0.131348 }
+    <MRef> { Fruit }
+    <VertexRef> { 40 42 49 <Ref> { Fruit } }
+  }
+  <Polygon> {
+    <Normal> { 0.821601 0.555914 -0.126223 }
+    <MRef> { Fruit }
+    <VertexRef> { 43 45 50 <Ref> { Fruit } }
+  }
+  <Polygon> {
+    <Normal> { 0.286276 -0.488254 0.824412 }
+    <MRef> { Fruit }
+    <VertexRef> { 51 52 53 <Ref> { Fruit } }
+  }
+  <Polygon> {
+    <Normal> { -0.428683 -0.442105 0.787892 }
+    <MRef> { Fruit }
+    <VertexRef> { 54 55 56 <Ref> { Fruit } }
+  }
+  <Polygon> {
+    <Normal> { -0.483718 0.22858 0.844848 }
+    <MRef> { Fruit }
+    <VertexRef> { 57 58 59 <Ref> { Fruit } }
+  }
+  <Polygon> {
+    <Normal> { 0.064606 0.61994 0.781985 }
+    <MRef> { Fruit }
+    <VertexRef> { 60 61 62 <Ref> { Fruit } }
+  }
+  <Polygon> {
+    <Normal> { 0.630563 0.128161 0.765483 }
+    <MRef> { Fruit }
+    <VertexRef> { 63 64 65 <Ref> { Fruit } }
+  }
+  <Polygon> {
+    <Normal> { -0.510903 -0.351837 0.78434 }
+    <MRef> { Fruit }
+    <VertexRef> { 65 62 66 <Ref> { Fruit } }
+  }
+  <Polygon> {
+    <Normal> { 0.384769 0.253401 0.887548 }
+    <MRef> { Fruit }
+    <VertexRef> { 65 64 62 <Ref> { Fruit } }
+  }
+  <Polygon> {
+    <Normal> { 0.336541 0.533007 0.776302 }
+    <MRef> { Fruit }
+    <VertexRef> { 64 60 62 <Ref> { Fruit } }
+  }
+  <Polygon> {
+    <Normal> { 0.091262 -0.559513 0.823782 }
+    <MRef> { Fruit }
+    <VertexRef> { 62 59 66 <Ref> { Fruit } }
+  }
+  <Polygon> {
+    <Normal> { -0.231187 0.331852 0.914564 }
+    <MRef> { Fruit }
+    <VertexRef> { 62 61 59 <Ref> { Fruit } }
+  }
+  <Polygon> {
+    <Normal> { -0.38515 0.359889 0.849788 }
+    <MRef> { Fruit }
+    <VertexRef> { 61 57 59 <Ref> { Fruit } }
+  }
+  <Polygon> {
+    <Normal> { 0.577485 0.072451 0.81318 }
+    <MRef> { Fruit }
+    <VertexRef> { 59 56 66 <Ref> { Fruit } }
+  }
+  <Polygon> {
+    <Normal> { -0.394474 0.081548 0.915281 }
+    <MRef> { Fruit }
+    <VertexRef> { 59 58 56 <Ref> { Fruit } }
+  }
+  <Polygon> {
+    <Normal> { -0.57796 -0.240571 0.7798 }
+    <MRef> { Fruit }
+    <VertexRef> { 58 54 56 <Ref> { Fruit } }
+  }
+  <Polygon> {
+    <Normal> { 0.226392 0.527893 0.818582 }
+    <MRef> { Fruit }
+    <VertexRef> { 56 53 66 <Ref> { Fruit } }
+  }
+  <Polygon> {
+    <Normal> { -0.088898 -0.390247 0.916409 }
+    <MRef> { Fruit }
+    <VertexRef> { 56 55 53 <Ref> { Fruit } }
+  }
+  <Polygon> {
+    <Normal> { 0.076946 -0.55452 0.828606 }
+    <MRef> { Fruit }
+    <VertexRef> { 55 51 53 <Ref> { Fruit } }
+  }
+  <Polygon> {
+    <Normal> { -0.522046 0.291806 0.801447 }
+    <MRef> { Fruit }
+    <VertexRef> { 53 65 66 <Ref> { Fruit } }
+  }
+  <Polygon> {
+    <Normal> { 0.314684 -0.282388 0.906218 }
+    <MRef> { Fruit }
+    <VertexRef> { 53 52 65 <Ref> { Fruit } }
+  }
+  <Polygon> {
+    <Normal> { 0.630563 -0.128161 0.765483 }
+    <MRef> { Fruit }
+    <VertexRef> { 52 63 65 <Ref> { Fruit } }
+  }
+  <Polygon> {
+    <Normal> { 0.897436 0.295999 0.327099 }
+    <MRef> { Fruit }
+    <VertexRef> { 50 64 63 <Ref> { Fruit } }
+  }
+  <Polygon> {
+    <Normal> { 0.813383 0.550353 0.188467 }
+    <MRef> { Fruit }
+    <VertexRef> { 50 45 64 <Ref> { Fruit } }
+  }
+  <Polygon> {
+    <Normal> { 0.598541 0.726392 0.337791 }
+    <MRef> { Fruit }
+    <VertexRef> { 45 60 64 <Ref> { Fruit } }
+  }
+  <Polygon> {
+    <Normal> { -0.026412 0.937826 0.3461 }
+    <MRef> { Fruit }
+    <VertexRef> { 49 61 60 <Ref> { Fruit } }
+  }
+  <Polygon> {
+    <Normal> { -0.32303 0.925879 0.195958 }
+    <MRef> { Fruit }
+    <VertexRef> { 49 42 61 <Ref> { Fruit } }
+  }
+  <Polygon> {
+    <Normal> { -0.558636 0.757027 0.338875 }
+    <MRef> { Fruit }
+    <VertexRef> { 42 57 61 <Ref> { Fruit } }
+  }
+  <Polygon> {
+    <Normal> { -0.911174 0.251323 0.326494 }
+    <MRef> { Fruit }
+    <VertexRef> { 48 58 57 <Ref> { Fruit } }
+  }
+  <Polygon> {
+    <Normal> { -0.98288 0 0.18425 }
+    <MRef> { Fruit }
+    <VertexRef> { 48 39 58 <Ref> { Fruit } }
+  }
+  <Polygon> {
+    <Normal> { -0.911174 -0.251323 0.326494 }
+    <MRef> { Fruit }
+    <VertexRef> { 39 54 58 <Ref> { Fruit } }
+  }
+  <Polygon> {
+    <Normal> { -0.558636 -0.757027 0.338875 }
+    <MRef> { Fruit }
+    <VertexRef> { 47 55 54 <Ref> { Fruit } }
+  }
+  <Polygon> {
+    <Normal> { -0.32303 -0.925879 0.195958 }
+    <MRef> { Fruit }
+    <VertexRef> { 47 36 55 <Ref> { Fruit } }
+  }
+  <Polygon> {
+    <Normal> { -0.026412 -0.937826 0.3461 }
+    <MRef> { Fruit }
+    <VertexRef> { 36 51 55 <Ref> { Fruit } }
+  }
+  <Polygon> {
+    <Normal> { 0.598541 -0.726392 0.337791 }
+    <MRef> { Fruit }
+    <VertexRef> { 46 52 51 <Ref> { Fruit } }
+  }
+  <Polygon> {
+    <Normal> { 0.813383 -0.550353 0.188467 }
+    <MRef> { Fruit }
+    <VertexRef> { 46 33 52 <Ref> { Fruit } }
+  }
+  <Polygon> {
+    <Normal> { 0.897436 -0.295999 0.327099 }
+    <MRef> { Fruit }
+    <VertexRef> { 33 63 52 <Ref> { Fruit } }
+  }
+  <Polygon> {
+    <Normal> { 0.326562 0.936005 0.131348 }
+    <MRef> { Fruit }
+    <VertexRef> { 45 49 60 <Ref> { Fruit } }
+  }
+  <Polygon> {
+    <Normal> { 0.32303 0.925879 -0.195958 }
+    <MRef> { Fruit }
+    <VertexRef> { 45 44 49 <Ref> { Fruit } }
+  }
+  <Polygon> {
+    <Normal> { 0.026412 0.937826 -0.3461 }
+    <MRef> { Fruit }
+    <VertexRef> { 44 40 49 <Ref> { Fruit } }
+  }
+  <Polygon> {
+    <Normal> { -0.821601 0.555914 0.126223 }
+    <MRef> { Fruit }
+    <VertexRef> { 42 48 57 <Ref> { Fruit } }
+  }
+  <Polygon> {
+    <Normal> { -0.813383 0.550353 -0.188467 }
+    <MRef> { Fruit }
+    <VertexRef> { 42 41 48 <Ref> { Fruit } }
+  }
+  <Polygon> {
+    <Normal> { -0.897436 0.295999 -0.327099 }
+    <MRef> { Fruit }
+    <VertexRef> { 41 37 48 <Ref> { Fruit } }
+  }
+  <Polygon> {
+    <Normal> { -0.821601 -0.555914 0.126223 }
+    <MRef> { Fruit }
+    <VertexRef> { 39 47 54 <Ref> { Fruit } }
+  }
+  <Polygon> {
+    <Normal> { -0.813383 -0.550353 -0.188467 }
+    <MRef> { Fruit }
+    <VertexRef> { 39 38 47 <Ref> { Fruit } }
+  }
+  <Polygon> {
+    <Normal> { -0.598541 -0.726392 -0.337791 }
+    <MRef> { Fruit }
+    <VertexRef> { 38 34 47 <Ref> { Fruit } }
+  }
+  <Polygon> {
+    <Normal> { 0.326562 -0.936005 0.131348 }
+    <MRef> { Fruit }
+    <VertexRef> { 36 46 51 <Ref> { Fruit } }
+  }
+  <Polygon> {
+    <Normal> { 0.32303 -0.925879 -0.195958 }
+    <MRef> { Fruit }
+    <VertexRef> { 36 35 46 <Ref> { Fruit } }
+  }
+  <Polygon> {
+    <Normal> { 0.558636 -0.757027 -0.338875 }
+    <MRef> { Fruit }
+    <VertexRef> { 35 28 46 <Ref> { Fruit } }
+  }
+  <Polygon> {
+    <Normal> { 0.992364 0 0.123342 }
+    <MRef> { Fruit }
+    <VertexRef> { 33 50 63 <Ref> { Fruit } }
+  }
+  <Polygon> {
+    <Normal> { 0.982879 0 -0.18425 }
+    <MRef> { Fruit }
+    <VertexRef> { 33 29 50 <Ref> { Fruit } }
+  }
+  <Polygon> {
+    <Normal> { 0.911174 0.251323 -0.326494 }
+    <MRef> { Fruit }
+    <VertexRef> { 29 43 50 <Ref> { Fruit } }
+  }
+  <Polygon> {
+    <Normal> { 0.473442 0.532605 -0.701558 }
+    <MRef> { Fruit }
+    <VertexRef> { 32 44 43 <Ref> { Fruit } }
+  }
+  <Polygon> {
+    <Normal> { 0.184305 0.518992 -0.834673 }
+    <MRef> { Fruit }
+    <VertexRef> { 32 31 44 <Ref> { Fruit } }
+  }
+  <Polygon> {
+    <Normal> { -0.047057 0.702691 -0.709937 }
+    <MRef> { Fruit }
+    <VertexRef> { 31 40 44 <Ref> { Fruit } }
+  }
+  <Polygon> {
+    <Normal> { -0.401137 0.587959 -0.70242 }
+    <MRef> { Fruit }
+    <VertexRef> { 31 41 40 <Ref> { Fruit } }
+  }
+  <Polygon> {
+    <Normal> { -0.470971 0.313133 -0.824702 }
+    <MRef> { Fruit }
+    <VertexRef> { 31 30 41 <Ref> { Fruit } }
+  }
+  <Polygon> {
+    <Normal> { -0.704452 0.167849 -0.689619 }
+    <MRef> { Fruit }
+    <VertexRef> { 30 37 41 <Ref> { Fruit } }
+  }
+  <Polygon> {
+    <Normal> { -0.704452 -0.167849 -0.689619 }
+    <MRef> { Fruit }
+    <VertexRef> { 30 38 37 <Ref> { Fruit } }
+  }
+  <Polygon> {
+    <Normal> { -0.470971 -0.313133 -0.824702 }
+    <MRef> { Fruit }
+    <VertexRef> { 30 27 38 <Ref> { Fruit } }
+  }
+  <Polygon> {
+    <Normal> { -0.401137 -0.587959 -0.70242 }
+    <MRef> { Fruit }
+    <VertexRef> { 27 34 38 <Ref> { Fruit } }
+  }
+  <Polygon> {
+    <Normal> { 0.678942 0.250586 -0.690105 }
+    <MRef> { Fruit }
+    <VertexRef> { 29 32 43 <Ref> { Fruit } }
+  }
+  <Polygon> {
+    <Normal> { 0.573765 0 -0.81902 }
+    <MRef> { Fruit }
+    <VertexRef> { 29 26 32 <Ref> { Fruit } }
+  }
+  <Polygon> {
+    <Normal> { -0.069345 0 -0.997593 }
+    <MRef> { Fruit }
+    <VertexRef> { 26 25 32 <Ref> { Fruit } }
+  }
+  <Polygon> {
+    <Normal> { -0.047057 -0.702691 -0.709937 }
+    <MRef> { Fruit }
+    <VertexRef> { 27 35 34 <Ref> { Fruit } }
+  }
+  <Polygon> {
+    <Normal> { 0.184306 -0.518992 -0.834673 }
+    <MRef> { Fruit }
+    <VertexRef> { 27 26 35 <Ref> { Fruit } }
+  }
+  <Polygon> {
+    <Normal> { 0.473442 -0.532605 -0.701558 }
+    <MRef> { Fruit }
+    <VertexRef> { 26 28 35 <Ref> { Fruit } }
+  }
+}

@@ -37,6 +37,8 @@ class Gameplay:
         self.player.actor.setPos(self.terrain.startPos)
         self.zorrito=Zorrito(self.base)
         self.zorrito.actor.setPos(self.terrain.zorritoStartPos)
+        self.zorrito.startAI(self.player.actor)
+        log.debug("zorrito pos is %s"%str(self.zorrito.actor.getPos()))
         #
         self.terrain.plightP.reparentTo(self.player.actor)
         self.terrain.plightP.setPos(0, 3, 10)

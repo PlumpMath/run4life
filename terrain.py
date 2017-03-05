@@ -22,7 +22,7 @@ class Terrain:
         self.model.reparentTo(self.base.render)
         # start position
         self.startPos=self.model.find("**/StartPosition").getPos()
-        self.zorritoStartPos=self.model.find("**/ZorritoStartPos.000").getPos()
+        self.zorritoStartPosList=[zsp.getPos() for zsp in self.model.findAllMatches("**/ZorritoStartPos.*")]
         # sky
         self.setUpSky()
         # lights
@@ -52,11 +52,11 @@ class Terrain:
         #   sun
         sun=DirectionalLight("sun")
         sun.setColor(Vec4(Terrain.COLOR_WHITE))
-        sun.setShadowCaster(True, 1024, 1024)
+        #sun.setShadowCaster(True, 1024, 1024)
         sun.getLens().setFilmSize(Vec2(100, 100))
         sun.getLens().setNearFar(10, 200)
         sun.getLens().setFov(200)
-        sun.showFrustum()
+        #sun.showFrustum()
         sunP=self.base.render.attachNewNode(sun)
         sunP.setPos(0, -2, 20)
         sunP.setHpr(-60, -90, -30)

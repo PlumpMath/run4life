@@ -4,6 +4,7 @@ from direct.gui.OnscreenText import OnscreenText
 from terrain import Terrain
 from player import Player
 from zorrito import Zorrito
+import random
 
 import logging
 log=logging.getLogger(__name__)
@@ -35,16 +36,14 @@ class Gameplay:
         self.terrain=Terrain(self.base)
         self.player=Player(self.base)
         self.player.actor.setPos(self.terrain.startPos)
-        self.zorrito=Zorrito(self.base)
-        self.zorrito.actor.setPos(self.terrain.zorritoStartPos)
-        self.zorrito.startAI(self.player.actor)
-        log.debug("zorrito pos is %s"%str(self.zorrito.actor.getPos()))
+        #
+        self.placeZorritos()
         #
         self.terrain.plightP.reparentTo(self.player.actor)
         self.terrain.plightP.setPos(0, 3, 10)
         # camera
         self.cam.reparentTo(self.player.actor)
-        self.cam.setPos(0, 4, 1.5)
+        self.cam.setPos(0, 4, 2)
         self.cam.lookAt(self.player.camNode)
         # task
         #self.base.taskMgr.add(self.update, "gameplayUpdateTask")
@@ -58,16 +57,20 @@ class Gameplay:
         log.info("stoped.")
 
     def update(self, task):
-        #self.label.setText("Player state:{state:'%s',pos:%s,hpr=%s,zoff:%s}.\nTerrain:{zone:'%s',surfz:%s}\nzVelocity=%s\ncollObjs=%s\nkeyState=%s"%(self.player.state, str(self.player.actor.getPos()), str(self.player.actor.getHpr()), str(self.player.zOffset), str(self.player.terrainZone), str(self.player.terrainSurfZ), str(self.player.zVelocity), str(self.player.collidedObjects), str(self.player.keyState)))
-        # camera
-        camVec=self.cam.getPos()-self.player.actor.getPos()
-        camVec.setZ(0)
-        camDist=camVec.length()
-        camVec.normalize()
-        if camDist>Gameplay.MAX_CAM_PLAYER_DISTANCE:
-            self.cam.setPos(self.cam.getPos()+camVec*(camDist-Gameplay.MAX_CAM_PLAYER_DISTANCE))
-        if camDist<Gameplay.MIN_CAM_PLAYER_DISTANCE:
-            self.cam.setPos(self.cam.getPos()-camVec*(Gameplay.MIN_CAM_PLAYER_DISTANCE-camDist))
-        camVec.setZ(2)
-        self.cam.lookAt(self.player.actor)
+        # zorritos
+        for zorrito in self.terrain.zorritos:
+            vec=self.player.actor.getPos()-zorrito.actor.getPos()
+            zorrito.setDistanceToPlayer(vec.length())
         return task.cont
+
+    def placeZorritos(self):
+        self.zorritos=[]
+        cantZorritos=int(len(self.terrain.zorritoStartPosList)/2)
+        zorritosPosList=random.sample(self.terrain.zorritoStartPosList, cantZorritos)
+        log.debug("placeZorritos:\n\t%(list)s"%{"list":str(self.terrain.zorritoStartPosList)})
+        for zorritoPos in zorritosPosList:
+            zorrito=Zorrito(self.base, self.player)
+            zorrito.actor.setPos(zorritoPos)
+            log.debug("zorrito pos is %s"%str(zorritoPos))
+            self.zorritos.append(zorrito)
+        

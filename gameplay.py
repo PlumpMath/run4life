@@ -43,10 +43,10 @@ class Gameplay:
         self.terrain.plightP.setPos(0, 3, 10)
         # camera
         self.cam.reparentTo(self.player.actor)
-        self.cam.setPos(0, 4, 2)
+        self.cam.setPos(0, 4, 1.5)
         self.cam.lookAt(self.player.camNode)
         # task
-        #self.base.taskMgr.add(self.update, "gameplayUpdateTask")
+        self.base.taskMgr.add(self.update, "gameplayUpdateTask")
         log.info("started.")
     
     def stop(self):
@@ -57,20 +57,17 @@ class Gameplay:
         log.info("stoped.")
 
     def update(self, task):
-        # zorritos
-        for zorrito in self.terrain.zorritos:
-            vec=self.player.actor.getPos()-zorrito.actor.getPos()
-            zorrito.setDistanceToPlayer(vec.length())
+        self.label.setText("Zorrito path finding behavior status is %s"%self.zorritos[0].aiBehaviors.behaviorStatus("pathfollow"))
         return task.cont
 
     def placeZorritos(self):
         self.zorritos=[]
-        cantZorritos=int(len(self.terrain.zorritoStartPosList)/2)
+        cantZorritos=1#int(len(self.terrain.zorritoStartPosList)/2)
         zorritosPosList=random.sample(self.terrain.zorritoStartPosList, cantZorritos)
         log.debug("placeZorritos:\n\t%(list)s"%{"list":str(self.terrain.zorritoStartPosList)})
         for zorritoPos in zorritosPosList:
             zorrito=Zorrito(self.base, self.player)
-            zorrito.actor.setPos(zorritoPos)
+            zorrito.actor.setPos(0, -20, 0)#zorritoPos)
             log.debug("zorrito pos is %s"%str(zorritoPos))
             self.zorritos.append(zorrito)
         
